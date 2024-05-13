@@ -4,6 +4,12 @@ export interface UpdateInfoRequest {
 export interface AddInfoRequest {
   name: string;
   age: number;
-  birthday: string;
+  birthday: DateObject;
   married: boolean;
+}
+
+export interface DateObject {
+  day: number;
+  month: number;
+  year: number;
 }

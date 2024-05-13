@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { UpdateInfoRequest as UpdateInfoRequestInterface } from './interfaces';
@@ -31,10 +31,10 @@ export class InfoService {
     const data = plainToClass(AddInfoRequest, rawData);
     const validationErrors = await validate(data);
     if (validationErrors.length > 0) {
-      return {
+      throw new BadRequestException({
         success: false,
         errors: validationErrors,
-      };
+      });
     }
     return {
       success: true,

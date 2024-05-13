@@ -5,6 +5,7 @@ import {
 } from 'class-validator';
 import { addYears } from 'date-fns';
 import { AddInfoRequest as AddInfoRequestInterface } from 'src/info/interfaces';
+import { DateObject } from 'src/info/interfaces';
 
 export function IsBirthdayValid(validationOptions?: ValidationOptions) {
   return function (object: AddInfoRequestInterface, propertyName: string) {
@@ -14,11 +15,11 @@ export function IsBirthdayValid(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(value: string, args: ValidationArguments) {
+        validate(value: DateObject, args: ValidationArguments) {
           const { age } = args.object as { age: number };
 
           const today = new Date();
-          const birthday = new Date(value);
+          const birthday = new Date(value.year, value.month - 1, value.day);
 
           const lowerBound = addYears(birthday, age);
           const upperBound = addYears(lowerBound, 1);
