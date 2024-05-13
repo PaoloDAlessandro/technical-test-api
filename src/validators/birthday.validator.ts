@@ -1,8 +1,9 @@
 import {
   registerDecorator,
-  ValidationOptions,
   ValidationArguments,
+  ValidationOptions,
 } from 'class-validator';
+import { addYears } from 'date-fns';
 import { AddInfoRequest as AddInfoRequestInterface } from 'src/info/interfaces';
 
 export function IsBirthdayValid(validationOptions?: ValidationOptions) {
@@ -13,17 +14,16 @@ export function IsBirthdayValid(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate(value: any, args: ValidationArguments) {
+        validate(value: string, args: ValidationArguments) {
           const { age } = args.object as { age: number };
-          const currentDate = new Date();
+
+          const today = new Date();
           const birthday = new Date(value);
-          const ageFromDate =
-            currentDate.getFullYear() - birthday.getFullYear();
-          birthday.setFullYear(currentDate.getFullYear());
-          if (birthday > currentDate) {
-            birthday.setFullYear(currentDate.getFullYear() - 1);
-          }
-          return ageFromDate === age;
+
+          const lowerBound = addYears(birthday, age);
+          const upperBound = addYears(lowerBound, 1);
+
+          return lowerBound <= today && today < upperBound;
         },
         defaultMessage(args: ValidationArguments) {
           const { age } = args.object as { age: number };
